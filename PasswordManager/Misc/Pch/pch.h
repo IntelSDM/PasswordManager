@@ -17,3 +17,6 @@
 #include <TlHelp32.h>
 #include <thread>
 #include <filesystem>
+#include <algorithm> 
+#include <cctype>    
+
