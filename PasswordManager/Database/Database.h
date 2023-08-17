@@ -1,6 +1,7 @@
 #pragma once
 #include <mysql_driver.h>
 #include <mysql_connection.h>
+
 class Database
 {
 protected:
@@ -10,8 +11,8 @@ protected:
 private:
 	void CreateDatabase();
 	void StartDatabase();
-	std::string ToLower(const std::string input);
+	std::string ToLower(const std::string& input);
 public:
 	Database();
-
+	~Database();
 };

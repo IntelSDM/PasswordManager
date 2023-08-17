@@ -11,7 +11,7 @@ Database::Database()
 	Database::StartDatabase();
 	Database::CreateDatabase();
 }
-std::string Database::ToLower(const std::string input)
+std::string Database::ToLower(const std::string& input)
 {
 	std::string result = input;
 	std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c)
@@ -59,12 +59,18 @@ void Database::CreateDatabase()
 			std::cout << existancepair.first << " Found\n";
 		}
 	}
-	Connection->close();
-
 }
+
 void Database::StartDatabase()
 {
 	Driver = sql::mysql::get_mysql_driver_instance();
 	Connection = Driver->connect("tcp://127.0.0.1:3306", "root", "CoolPassword");
 	
+}
+
+Database::~Database()
+{
+	Connection->close();
+	delete Connection;
+	//delete Driver;
 }
