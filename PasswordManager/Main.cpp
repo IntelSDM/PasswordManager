@@ -1,7 +1,9 @@
 #include "pch.h"
-#include "sqlite3.h"
+
+#include <filesystem>
+#include <fstream>
+#include "Database.h"
 void main()
 {
-	sqlite3* database;
-	
+	Database db;
 }
