@@ -14,7 +14,32 @@ Database::Database()
 }
 void Database::CreateTables()
 {
+	// we do this for all our databases so we can set up a database such as a development database and commercial database with the same tables
+	for (std::string database : Database::DatabaseNames)
+	{
+		Database:Connection->setSchema(database);
 
+		sql::ResultSet* res;
+		res = Connection->createStatement()->executeQuery("SHOW TABLES");
+		std::map<std::string, bool> usedtables;
+		while (res->next())
+		{
+			std::cout << "Found Table: " << res->getString(1) << std::endl;
+			usedtables[Database::ToLower(res->getString(1))] = true;
+		}
+		// create our tables here
+		if (usedtables[Database::ToLower("Users")] == false)
+		{
+
+			Connection->createStatement()->execute("CREATE TABLE Users ("
+				"id INT AUTO_INCREMENT PRIMARY KEY,"
+				"Username VARCHAR(255),"
+				"Password VARCHAR(255))");
+
+		}
+
+		delete res;
+	}
 }
 std::string Database::ToLower(const std::string& input)
 {

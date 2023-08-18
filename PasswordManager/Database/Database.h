@@ -7,7 +7,7 @@ class Database
 protected:
 	sql::mysql::MySQL_Driver* Driver;
 	sql::Connection* Connection;
-	const std::list<std::string> DatabaseNames = {"Users"};
+	const std::list<std::string> DatabaseNames = {"DevBuild"};
 private:
 	void CreateDatabase();
 	void StartDatabase();
