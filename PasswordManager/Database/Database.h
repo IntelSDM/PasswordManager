@@ -11,6 +11,7 @@ protected:
 private:
 	void CreateDatabase();
 	void StartDatabase();
+	void CreateTables();
 	std::string ToLower(const std::string& input);
 public:
 	Database();

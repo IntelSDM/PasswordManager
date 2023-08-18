@@ -10,6 +10,11 @@ Database::Database()
 {
 	Database::StartDatabase();
 	Database::CreateDatabase();
+	Database::CreateTables();
+}
+void Database::CreateTables()
+{
+
 }
 std::string Database::ToLower(const std::string& input)
 {
@@ -23,19 +28,21 @@ std::string Database::ToLower(const std::string& input)
 void Database::CreateDatabase()
 {
 	sql::ResultSet* result = Connection->createStatement()->executeQuery("SHOW DATABASES");
-	
 	std::map<std::string, bool> databaseexistance;
+
 	// set up datavasexistance with our databases
 	for (std::string databasename : Database::DatabaseNames)
 	{
 			databaseexistance[Database::ToLower(databasename)] = false;
 	}
+
 	// set all the current databases we got from the query to true
 	while (result->next())
 	{
 		std::string existingdatabasename = result->getString(1);
 		databaseexistance[existingdatabasename] = true;
 	}
+
 	// check if databases exist
 	bool dbresult = false;
 	for (auto existancepair : databaseexistance)
