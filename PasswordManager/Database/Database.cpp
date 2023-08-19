@@ -38,7 +38,8 @@ void Database::CreateTables()
 			Connection->createStatement()->execute("CREATE TABLE Users ("
 				"id INT AUTO_INCREMENT PRIMARY KEY,"
 				"Username VARCHAR(255),"
-				"Password VARCHAR(255))");
+				"Password VARCHAR(255),"
+				"Salt VARCHAR(255))");
 
 		}
 
@@ -96,7 +97,25 @@ void Database::CreateDatabase()
 		}
 	}
 }
+std::wstring Database::GenerateSalt()
+{
+	const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	const int length = 16;
 
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distribution(0, sizeof(charset) - 2);
+
+	std::wstring salt;
+	salt.reserve(length);
+
+	for (int i = 0; i < length; ++i)
+	{
+		salt += charset[distribution(gen)];
+	}
+
+	return salt;
+}
 void Database::StartDatabase()
 {
 	Driver = sql::mysql::get_mysql_driver_instance();
@@ -118,12 +137,12 @@ void Database::AddUser(const std::wstring& username,const std::wstring& password
 {
 	Connection->setSchema("DevBuild");
 
-	sql::PreparedStatement* statement = Connection->prepareStatement("INSERT INTO Users (Username, Password) VALUES (?, ?)");
+	sql::PreparedStatement* statement = Connection->prepareStatement("INSERT INTO Users (Username, Password, Salt) VALUES (?, ?, ?)");
 
-
+	std::wstring salt = Database::GenerateSalt();
 	statement->setString(1, ToSQLString(username));
-	statement->setString(2, ToSQLString(sha256(password)));
-
+	statement->setString(2, ToSQLString(sha256(password + salt)));
+	statement->setString(3, ToSQLString(salt));
 	statement->execute();
 	delete statement;
 }

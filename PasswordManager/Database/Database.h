@@ -14,6 +14,7 @@ private:
 	void CreateTables();
 	std::string ToLower(const std::string& input);
 	sql::SQLString ToSQLString(const std::wstring& input);
+	std::wstring GenerateSalt();
 public:
 	Database();
 	~Database();
