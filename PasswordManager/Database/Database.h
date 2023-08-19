@@ -14,9 +14,12 @@ private:
 	void CreateTables();
 	std::string ToLower(const std::string& input);
 	sql::SQLString ToSQLString(const std::wstring& input);
+	std::wstring SQLStringToWString(const sql::SQLString& sqlstring);
 	std::wstring GenerateSalt();
+
 public:
 	Database();
 	~Database();
 	void AddUser(const std::wstring& username, const std::wstring& password);
+	void VerifyUser(const std::wstring& username, const std::wstring& password);
 };

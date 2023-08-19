@@ -14,7 +14,8 @@ Database::Database()
 	Database::StartDatabase();
 	Database::CreateDatabase();
 	Database::CreateTables();
-	Database::AddUser(L"test1", L"Test");
+	Database::AddUser(L"test2", L"Test");
+	Database::VerifyUser(L"test2", L"Test");
 }
 void Database::CreateTables()
 {
@@ -133,9 +134,37 @@ sql::SQLString Database::ToSQLString(const std::wstring& input)
 	std::string utf8(input.begin(), input.end());
 	return sql::SQLString(utf8.c_str());
 }
+
+std::wstring Database::SQLStringToWString(const sql::SQLString& sqlstring)
+{
+	const std::string utf8str = sqlstring.asStdString();
+	std::wstring wstr;
+
+	for (char ch : utf8str)
+	{
+		wstr += static_cast<wchar_t>(ch);
+	}
+
+	return wstr;
+}
 void Database::AddUser(const std::wstring& username,const std::wstring& password)
 {
 	Connection->setSchema("DevBuild");
+	{
+		sql::PreparedStatement* statement = Connection->prepareStatement("SELECT COUNT(*) FROM Users WHERE Username = ?");
+		statement->setString(1, ToSQLString(username));
+		sql::ResultSet* result = statement->executeQuery();
+		result->next();
+		int count = result->getInt(1);
+		delete result;
+		delete statement;
+		if (count > 0)
+		{
+			std::cout << "User Already Exists:" << ToSQLString(username).c_str() << std::endl;
+			return;
+		}
+	}
+	
 
 	sql::PreparedStatement* statement = Connection->prepareStatement("INSERT INTO Users (Username, Password, Salt) VALUES (?, ?, ?)");
 
@@ -145,4 +174,35 @@ void Database::AddUser(const std::wstring& username,const std::wstring& password
 	statement->setString(3, ToSQLString(salt));
 	statement->execute();
 	delete statement;
+}
+void Database::VerifyUser(const std::wstring& username, const std::wstring& password)
+{
+	Connection->setSchema("DevBuild");
+	sql::PreparedStatement* statement = Connection->prepareStatement("SELECT Password, Salt FROM Users WHERE Username = ?");
+	statement->setString(1, ToSQLString(username));
+	sql::ResultSet* result = statement->executeQuery();
+
+	if (result->next()) // Check if the username exists in the database
+	{
+		std::wstring storedHashedPassword = SQLStringToWString(result->getString(1));
+		std::wstring salt = SQLStringToWString(result->getString(2));
+
+		std::wstring hashedPasswordToCheck = sha256(password + salt);
+
+		if (hashedPasswordToCheck == storedHashedPassword)
+		{
+			std::cout << "Successful Login\n";
+		}
+		else
+		{
+			std::cout << "Login Failed\n";
+		}
+	}
+	else
+	{
+		std::cout << "Username not found\n";
+	}
+
+	delete statement;
+	delete result;
 }
