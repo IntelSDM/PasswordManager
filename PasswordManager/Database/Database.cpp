@@ -1,16 +1,20 @@
 #include "pch.h"
 #include "Database.h"
-
+#include <json.hpp>
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
+#include <cppconn/prepared_statement.h>
+#include <cppconn/sqlstring.h>
 #pragma comment(lib, "mysqlcppconn.lib")
+#include "SHA256.h"
 Database::Database()
 {
 	Database::StartDatabase();
 	Database::CreateDatabase();
 	Database::CreateTables();
+	Database::AddUser(L"test1", L"Test");
 }
 void Database::CreateTables()
 {
@@ -104,5 +108,22 @@ Database::~Database()
 {
 	Connection->close();
 	delete Connection;
-	//delete Driver;
+}
+sql::SQLString Database::ToSQLString(const std::wstring& input)
+{
+	std::string utf8(input.begin(), input.end());
+	return sql::SQLString(utf8.c_str());
+}
+void Database::AddUser(const std::wstring& username,const std::wstring& password)
+{
+	Connection->setSchema("DevBuild");
+
+	sql::PreparedStatement* statement = Connection->prepareStatement("INSERT INTO Users (Username, Password) VALUES (?, ?)");
+
+
+	statement->setString(1, ToSQLString(username));
+	statement->setString(2, ToSQLString(sha256(password)));
+
+	statement->execute();
+	delete statement;
 }
