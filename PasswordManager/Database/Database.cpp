@@ -124,17 +124,11 @@ void Database::StartDatabase()
 	
 }
 
-Database::~Database()
-{
-	Connection->close();
-	delete Connection;
-}
 sql::SQLString Database::ToSQLString(const std::wstring& input)
 {
 	std::string utf8(input.begin(), input.end());
 	return sql::SQLString(utf8.c_str());
 }
-
 std::wstring Database::SQLStringToWString(const sql::SQLString& sqlstring)
 {
 	const std::string utf8str = sqlstring.asStdString();
@@ -147,7 +141,8 @@ std::wstring Database::SQLStringToWString(const sql::SQLString& sqlstring)
 
 	return wstr;
 }
-void Database::AddUser(const std::wstring& username,const std::wstring& password)
+
+UserRegistrationResult Database::AddUser(const std::wstring& username,const std::wstring& password)
 {
 	Connection->setSchema("DevBuild");
 	{
@@ -161,7 +156,7 @@ void Database::AddUser(const std::wstring& username,const std::wstring& password
 		if (count > 0)
 		{
 			std::cout << "User Already Exists:" << ToSQLString(username).c_str() << std::endl;
-			return;
+			return UserRegistrationResult::InvalidUsername;
 		}
 	}
 	
@@ -174,8 +169,9 @@ void Database::AddUser(const std::wstring& username,const std::wstring& password
 	statement->setString(3, ToSQLString(salt));
 	statement->execute();
 	delete statement;
+	return UserRegistrationResult::Success;
 }
-void Database::VerifyUser(const std::wstring& username, const std::wstring& password)
+UserVerificationResult Database::VerifyUser(const std::wstring& username, const std::wstring& password)
 {
 	Connection->setSchema("DevBuild");
 	sql::PreparedStatement* statement = Connection->prepareStatement("SELECT Password, Salt FROM Users WHERE Username = ?");
@@ -192,17 +188,32 @@ void Database::VerifyUser(const std::wstring& username, const std::wstring& pass
 		if (hashedPasswordToCheck == storedHashedPassword)
 		{
 			std::cout << "Successful Login\n";
+			delete statement;
+			delete result;
+			return UserVerificationResult::Success;
 		}
 		else
 		{
 			std::cout << "Login Failed\n";
+			delete statement;
+			delete result;
+			return UserVerificationResult::InvalidPassword;
 		}
 	}
 	else
 	{
 		std::cout << "Username not found\n";
+		delete statement;
+		delete result;
+		return UserVerificationResult::InvalidUsername;
 	}
 
 	delete statement;
 	delete result;
+	return UserVerificationResult::InvalidUsername;
+}
+Database::~Database()
+{
+	Connection->close();
+	delete Connection;
 }

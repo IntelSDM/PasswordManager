@@ -1,7 +1,17 @@
 #pragma once
 #include <mysql_driver.h>
 #include <mysql_connection.h>
-
+enum class UserRegistrationResult
+{
+	Success,
+	InvalidUsername,
+};
+enum class UserVerificationResult
+{
+	Success,
+	InvalidUsername,
+	InvalidPassword,
+};
 class Database
 {
 protected:
@@ -20,6 +30,6 @@ private:
 public:
 	Database();
 	~Database();
-	void AddUser(const std::wstring& username, const std::wstring& password);
-	void VerifyUser(const std::wstring& username, const std::wstring& password);
+	UserRegistrationResult AddUser(const std::wstring& username, const std::wstring& password);
+	UserVerificationResult VerifyUser(const std::wstring& username, const std::wstring& password);
 };
