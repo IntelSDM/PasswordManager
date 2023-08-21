@@ -3,6 +3,15 @@
 #include <locale>
 #include <codecvt> 
 constexpr int BufferSize = 1000000;
+Client::Client(SOCKET socket)
+{
+	Client::Socket = socket;
+	std::thread thread([&]
+		{
+			Client::MessageHandler (); // create a thread for the client
+		});
+	thread.detach();
+}
 void Client::SendText(std::string text)
 {
 	ByteArray plaintext(text.begin(), text.end());

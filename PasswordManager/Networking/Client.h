@@ -2,9 +2,11 @@
 using ByteArray = std::vector<uint8_t>;
 class Client
 {
-
+	protected:
+		SOCKET Socket;
 public:
-	SOCKET Socket;
+	Client(SOCKET socket);
+
 	std::string IpAddress;
 	void SendText(std::string Text);
 	std::string ReceiveText();

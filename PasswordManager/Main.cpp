@@ -4,5 +4,5 @@
 void main()
 {
 	Database db;
-//	CreateSockets();
+	CreateSockets();
 }

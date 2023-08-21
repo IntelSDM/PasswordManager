@@ -2,9 +2,8 @@
 #pragma comment(lib, "ws2_32.lib")
 #include "Client.h"
 #include "Sockets.h"
-sockaddr_in hint;
-SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-Client* TCPClient = new Client;
+sockaddr_in HInt;
+SOCKET Sock = socket(AF_INET, SOCK_STREAM, 0);
 void CreateSockets()
 {
     WSADATA data;
@@ -26,14 +25,23 @@ void CreateSockets()
     hint.sin_family = AF_INET;
     hint.sin_port = htons(51000);
     inet_pton(AF_INET, "127.0.0.1", &hint.sin_addr);
+    bind(sock, (sockaddr*)&hint, sizeof(hint));
+    listen(sock, SOMAXCONN);
+    HInt = hint;
+    Sock = sock;
+    std::thread acceptclientsthread(AcceptClients);
+    acceptclientsthread.join();
+}
+void AcceptClients()
+{
     while (true)
     {
-        if (connect(sock, reinterpret_cast<sockaddr*>(&hint), sizeof(hint)) != SOCKET_ERROR)
+        int size = sizeof(HInt);
+        SOCKET socket;
+        if ((socket = accept(Sock, (SOCKADDR*)&HInt, &size)) != INVALID_SOCKET) 
         {
-            TCPClient->Socket = sock;
-            std::thread thread([&] {TCPClient->MessageHandler(); });    // create a thread for the client
-            thread.detach();
-            return;
+            Client* client = new Client(socket);
+
         }
     }
 }
