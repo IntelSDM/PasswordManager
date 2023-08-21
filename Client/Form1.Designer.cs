@@ -1,6 +1,6 @@
 ﻿namespace Client
 {
-    partial class Form1
+    partial class FrmLogin
     {
         /// <summary>
         ///  Required designer variable.
@@ -30,13 +30,18 @@
         {
             SuspendLayout();
             // 
-            // Form1
+            // FrmLogin
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(329, 400);
-            Name = "Form1";
-            Text = "Form1";
+            ClientSize = new Size(386, 382);
+            Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            Margin = new Padding(4, 4, 4, 4);
+            MaximizeBox = false;
+            Name = "FrmLogin";
+            ShowIcon = false;
+            Text = "Login";
             ResumeLayout(false);
         }
 
