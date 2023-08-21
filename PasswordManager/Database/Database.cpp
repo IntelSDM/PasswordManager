@@ -16,6 +16,8 @@ Database::Database()
 	Database::CreateTables();
 	Database::AddUser(L"test2", L"Test");
 	Database::VerifyUser(L"test2", L"Test");
+//	Database::AddManager(L"coolusername1", L"coolpassword1", L"CoolWebsite1");
+	Database::GetManagers();
 }
 void Database::CreateTables()
 {
@@ -43,7 +45,18 @@ void Database::CreateTables()
 				"Salt VARCHAR(255))");
 
 		}
+		if (usedtables[Database::ToLower("PasswordManagement")] == false)
+		{
 
+			Connection->createStatement()->execute("CREATE TABLE PasswordManagement ("
+				"id INT AUTO_INCREMENT PRIMARY KEY,"
+				"UserID INT,"
+				"Name VARCHAR(255),"
+				"Username VARCHAR(255),"
+				"Password VARCHAR(255),"
+				"FOREIGN KEY (UserID) REFERENCES Users(id))");
+
+		}
 		delete res;
 	}
 }
@@ -190,6 +203,9 @@ UserVerificationResult Database::VerifyUser(const std::wstring& username, const 
 			std::cout << "Successful Login\n";
 			delete statement;
 			delete result;
+			Database::LoggedIn = true;
+			Database::Username = username;
+			Database::Password = password;
 			return UserVerificationResult::Success;
 		}
 		else
@@ -216,4 +232,63 @@ Database::~Database()
 {
 	Connection->close();
 	delete Connection;
+}
+void Database::AddManager(const std::wstring& username, const std::wstring& password, const std::wstring& name)
+{
+	if (!LoggedIn)
+		return;
+	sql::PreparedStatement* statement = Connection->prepareStatement("SELECT id FROM Users WHERE Username = ?");
+	statement->setString(1, ToSQLString(Database::Username));
+	sql::ResultSet* result = statement->executeQuery();
+	int userid = -1; 
+	if (result->next())
+	{
+		userid = result->getInt(1); 
+	}
+	delete result;
+	if (userid == -1)
+		return;
+
+	Connection->setSchema("DevBuild");
+	statement = Connection->prepareStatement("INSERT INTO PasswordManagement (UserID, Username, Password, Name) VALUES (?, ?, ?, ?)");
+	statement->setInt(1, userid);
+	statement->setString(2, ToSQLString(username));
+	statement->setString(3, ToSQLString(password));
+	statement->setString(4, ToSQLString(name));
+	statement->execute();
+	delete statement;
+
+}
+void Database::GetManagers()
+{
+	if (!LoggedIn)
+		return;
+
+	Connection->setSchema("DevBuild");
+
+	sql::PreparedStatement* statement = Connection->prepareStatement("SELECT id FROM Users WHERE Username = ?");
+	statement->setString(1, ToSQLString(Database::Username));
+	sql::ResultSet* result = statement->executeQuery();
+	int userid = -1;
+	if (result->next())
+	{
+		userid = result->getInt(1);
+	}
+
+	if (userid == -1)
+		return;
+
+	statement = Connection->prepareStatement("SELECT Username, Password, Name FROM PasswordManagement WHERE UserID = ?");
+	statement->setInt(1, userid);
+	result = statement->executeQuery();
+	while (result->next())
+	{
+		sql::SQLString username = result->getString(1);
+		sql::SQLString password = result->getString(2);
+		sql::SQLString name = result->getString(3);
+		std::cout << "Username: " << username.c_str() << " Password: " << password.c_str() << " Name: " << name.c_str() << std::endl;
+	}
+	delete result;
+	delete statement;
+
 }

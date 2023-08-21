@@ -18,6 +18,9 @@ protected:
 	sql::mysql::MySQL_Driver* Driver;
 	sql::Connection* Connection;
 	const std::list<std::string> DatabaseNames = {"DevBuild"};
+	std::wstring Username;
+	std::wstring Password;
+	bool LoggedIn = false;
 private:
 	void CreateDatabase();
 	void StartDatabase();
@@ -32,4 +35,6 @@ public:
 	~Database();
 	UserRegistrationResult AddUser(const std::wstring& username, const std::wstring& password);
 	UserVerificationResult VerifyUser(const std::wstring& username, const std::wstring& password);
+	void AddManager(const std::wstring& username, const std::wstring& password, const std::wstring& name);
+	void GetManagers();
 };
