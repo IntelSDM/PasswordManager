@@ -14,10 +14,10 @@ Database::Database()
 	Database::StartDatabase();
 	Database::CreateDatabase();
 	Database::CreateTables();
-	Database::AddUser(L"test2", L"Test");
-	Database::VerifyUser(L"test2", L"Test");
+//	Database::AddUser(L"test2", L"Test");
+//	Database::VerifyUser(L"test2", L"Test");
 //	Database::AddManager(L"coolusername1", L"coolpassword1", L"CoolWebsite1");
-	Database::GetManagers();
+//	Database::GetManagers();
 }
 void Database::CreateTables()
 {

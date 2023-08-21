@@ -4,6 +4,20 @@
 #include "Sockets.h"
 sockaddr_in HInt;
 SOCKET Sock = socket(AF_INET, SOCK_STREAM, 0);
+void AcceptClients()
+{
+    while (true)
+    {
+        int size = sizeof(HInt);
+        SOCKET socket;
+        if ((socket = accept(Sock, (SOCKADDR*)&HInt, &size)) != INVALID_SOCKET)
+        {
+            std::cout << "Connection established\n";
+            Client* client = new Client(socket);
+
+        }
+    }
+}
 void CreateSockets()
 {
     WSADATA data;
@@ -31,17 +45,4 @@ void CreateSockets()
     Sock = sock;
     std::thread acceptclientsthread(AcceptClients);
     acceptclientsthread.join();
-}
-void AcceptClients()
-{
-    while (true)
-    {
-        int size = sizeof(HInt);
-        SOCKET socket;
-        if ((socket = accept(Sock, (SOCKADDR*)&HInt, &size)) != INVALID_SOCKET) 
-        {
-            Client* client = new Client(socket);
-
-        }
-    }
 }

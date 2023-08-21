@@ -1,35 +1,35 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
 
-namespace Client.Web.WebSockets
+namespace Client.Web
 {
     public class Sockets
     {
-        private ClientWebSocket _webSocket;
+        private ClientWebSocket Socket;
 
         public Sockets()
         {
-            _webSocket = new ClientWebSocket();
+            Socket = new ClientWebSocket();
         }
 
-        public async Task ConnectAsync(Uri uri, CancellationToken cancellationToken)
+        public async Task ConnectAsync(Uri uri, CancellationToken cancellationtoken)
         {
-            await _webSocket.ConnectAsync(uri, cancellationToken);
+            await Socket.ConnectAsync(uri, cancellationtoken);
         }
 
-        public async Task SendMessageAsync(string message, CancellationToken cancellationToken)
+        public async Task SendMessageAsync(string message, CancellationToken cancellationtoken)
         {
-            if (_webSocket.State == WebSocketState.Open)
+            if (Socket.State == WebSocketState.Open)
             {
                 var buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
-                await _webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken);
+                await Socket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationtoken);
             }
         }
 
-        public async Task<string> ReceiveMessageAsync(CancellationToken cancellationToken)
+        public async Task<string> ReceiveMessageAsync(CancellationToken cancellationtoken)
         {
             var buffer = new ArraySegment<byte>(new byte[4096]);
-            var result = await _webSocket.ReceiveAsync(buffer, cancellationToken);
+            var result = await Socket.ReceiveAsync(buffer, cancellationtoken);
 
             if (result.MessageType == WebSocketMessageType.Text)
             {
@@ -39,10 +39,10 @@ namespace Client.Web.WebSockets
             return null;
         }
 
-        public async Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
+        public async Task CloseAsync(WebSocketCloseStatus closestatus, string statusdescription, CancellationToken cancellationtoken)
         {
-            await _webSocket.CloseAsync(closeStatus, statusDescription, cancellationToken);
-            _webSocket.Dispose();
+            await Socket.CloseAsync(closestatus, statusdescription, cancellationtoken);
+            Socket.Dispose();
         }
     }
 }
