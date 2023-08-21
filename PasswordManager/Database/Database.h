@@ -12,6 +12,18 @@ enum class UserVerificationResult
 	InvalidUsername,
 	InvalidPassword,
 };
+enum class AddManagerResult
+{
+	Success,
+	InvalidUser,
+	NoInstances
+};
+enum class GetManagerResult
+{
+	Success,
+	InvalidUser,
+	NoInstances
+};
 class Database
 {
 protected:
@@ -35,6 +47,6 @@ public:
 	~Database();
 	UserRegistrationResult AddUser(const std::wstring& username, const std::wstring& password);
 	UserVerificationResult VerifyUser(const std::wstring& username, const std::wstring& password);
-	void AddManager(const std::wstring& username, const std::wstring& password, const std::wstring& name);
-	void GetManagers();
+	AddManagerResult AddManager(const std::wstring& username, const std::wstring& password, const std::wstring& name);
+	GetManagerResult GetManagers();
 };

@@ -233,10 +233,11 @@ Database::~Database()
 	Connection->close();
 	delete Connection;
 }
-void Database::AddManager(const std::wstring& username, const std::wstring& password, const std::wstring& name)
+AddManagerResult Database::AddManager(const std::wstring& username, const std::wstring& password, const std::wstring& name)
 {
 	if (!LoggedIn)
-		return;
+		return AddManagerResult::InvalidUser;
+	
 	sql::PreparedStatement* statement = Connection->prepareStatement("SELECT id FROM Users WHERE Username = ?");
 	statement->setString(1, ToSQLString(Database::Username));
 	sql::ResultSet* result = statement->executeQuery();
@@ -247,7 +248,7 @@ void Database::AddManager(const std::wstring& username, const std::wstring& pass
 	}
 	delete result;
 	if (userid == -1)
-		return;
+		return AddManagerResult::NoInstances;
 
 	Connection->setSchema("DevBuild");
 	statement = Connection->prepareStatement("INSERT INTO PasswordManagement (UserID, Username, Password, Name) VALUES (?, ?, ?, ?)");
@@ -257,12 +258,12 @@ void Database::AddManager(const std::wstring& username, const std::wstring& pass
 	statement->setString(4, ToSQLString(name));
 	statement->execute();
 	delete statement;
-
+	return AddManagerResult::Success;
 }
-void Database::GetManagers()
+GetManagerResult Database::GetManagers()
 {
 	if (!LoggedIn)
-		return;
+		return GetManagerResult::InvalidUser;
 
 	Connection->setSchema("DevBuild");
 
@@ -276,7 +277,7 @@ void Database::GetManagers()
 	}
 
 	if (userid == -1)
-		return;
+		return GetManagerResult::NoInstances;
 
 	statement = Connection->prepareStatement("SELECT Username, Password, Name FROM PasswordManagement WHERE UserID = ?");
 	statement->setInt(1, userid);
@@ -290,5 +291,5 @@ void Database::GetManagers()
 	}
 	delete result;
 	delete statement;
-
+	return GetManagerResult::Success;
 }
