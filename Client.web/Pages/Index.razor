@@ -1,3 +1,26 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<h1>Hello, Blazor!</h1>
+
+<p>This is a basic Blazor index page.</p>
+
+<input type="text" @bind="inputText" />
+<button @onclick="ShowMessage">Click me</button>
+<p>@message</p>
+
+@code {
+    private string inputText = "";
+    private string message = "";
+
+    private void ShowMessage()
+    {
+        if (!string.IsNullOrWhiteSpace(inputText))
+        {
+            message = $"You entered: {inputText}";
+        }
+        else
+        {
+            message = "Please enter some text.";
+        }
+    }
+}
