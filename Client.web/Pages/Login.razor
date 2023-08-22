@@ -1,0 +1,22 @@
+﻿@page "/Login"
+@inject NavigationManager NavigationManager
+
+<h1>Login:</h1>
+<p>Username:</p>
+<input type="text" @bind="UsernameInput" />
+<p>Password:</p>
+<input type="text" @bind="PasswordInput" />
+
+<div>
+    <button @onclick="LoginAccount">Login</button>
+</div>
+
+@code {
+    private string UsernameInput = "";
+    private string PasswordInput = "";
+    private void LoginAccount()
+    {
+
+    }
+
+}
