@@ -1,0 +1,22 @@
+﻿@page "/Register"
+@inject NavigationManager NavigationManager
+
+<h1>Register:</h1>
+<p>Username:</p>
+<input type="text" @bind="UsernameInput" />
+<p>Password:</p>
+<input type="text" @bind="PasswordInput" />
+
+<div>
+    <button @onclick="RegisterAccount">Register</button>
+</div>
+
+@code {
+    private string UsernameInput = "";
+    private string PasswordInput = "";
+    private void RegisterAccount()
+    {
+   
+    }
+   
+}
