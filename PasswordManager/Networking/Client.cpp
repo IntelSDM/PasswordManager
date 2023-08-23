@@ -2,7 +2,8 @@
 #include "Client.h"
 #include <locale>
 #include <codecvt> 
-constexpr int BufferSize = 1000000;
+#include "Database.h"
+constexpr int BufferSize = 10000;
 Client::Client(SOCKET socket)
 {
 	Client::Socket = socket;
@@ -50,5 +51,30 @@ std::string Client::ReceiveText()
 }
 void Client::MessageHandler()
 {
+	while (true)
+	{
+		std::string message = Client::ReceiveText();
+		if (message == "" || message.size() == 0)
+			continue;
+		std::cout << message << std::endl;
+		json jsoned = json::parse(message);
+		if (jsoned["Type"] == "Login")
+		{
+			UserVerificationResult identifier = Client::Database.VerifyUser(jsoned["Username"],jsoned["Password"]);
+			if (identifier == UserVerificationResult::Success)
+			{
+				Client::SendText("LoginSuccess");
+			}
+			
+		}
+		if (jsoned["Type"] == "Register")
+		{
 
+			UserRegistrationResult identifier = Client::Database.AddUser(jsoned["Username"], jsoned["Password"]);
+			if (identifier == UserRegistrationResult::Success)
+			{
+				Client::SendText("RegisterSuccess");
+			}
+		}
+	}
 }

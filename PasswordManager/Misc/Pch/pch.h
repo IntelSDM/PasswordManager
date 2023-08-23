@@ -23,3 +23,5 @@
 #include <random>
 #include <sstream>
 #include <locale>
+#include "json.hpp"
+using json = nlohmann::json;

@@ -4,6 +4,7 @@ class Client
 {
 	protected:
 		SOCKET Socket;
+		Database Database;
 public:
 	Client(SOCKET socket);
 

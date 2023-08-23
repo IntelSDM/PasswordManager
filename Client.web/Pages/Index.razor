@@ -1,12 +1,6 @@
 ﻿@page "/"
 @inject NavigationManager NavigationManager
 
-<h1>Hello, Blazor!</h1>
-
-<p>This is a basic Blazor index page.</p>
-
-<input type="text" @bind="inputText" />
-<button @onclick="ShowMessage">Click me</button>
 <div>
     <button @onclick="GoToLogin">Go To Login</button>
 </div>
@@ -27,15 +21,5 @@
     {
         NavigationManager.NavigateTo("/register");
     }
-    private void ShowMessage()
-    {
-        if (!string.IsNullOrWhiteSpace(inputText))
-        {
-            message = $"You entered: {inputText}";
-        }
-        else
-        {
-            message = "Please enter some text.";
-        }
-    }
+   
 }

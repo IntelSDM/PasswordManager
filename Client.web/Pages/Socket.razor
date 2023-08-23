@@ -15,16 +15,17 @@
 @code {
     private string status = "Disconnected";
     private string receivedMessage = "";
-    private async Task Connect()
+    public void Connect()
     {
         var uri = new Uri("wss://localhost:51000");
-        await Sockets.Instance.ConnectAsync(uri, CancellationToken.None);
+        Sockets.Instance.ConnectAsync(uri, CancellationToken.None);
         status = "Connected";
     }
 
-    private async Task Send()
+    public void Send()
     {
-        await Sockets.Instance.SendMessageAsync("Hello from Blazor WebSocket client!", CancellationToken.None);
+        Sockets.Instance.SendMessageAsync("Hello from Blazor WebSocket client!", CancellationToken.None);
+      
     }
 
 

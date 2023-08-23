@@ -28,17 +28,17 @@ namespace Client.Web
         private static ClientWebSocket LocalSocket;
         private static Sockets LocalInstance;
 
-        public async Task ConnectAsync(Uri uri, CancellationToken cancellationtoken)
+        public void ConnectAsync(Uri uri, CancellationToken cancellationtoken)
         {
-            await Socket.ConnectAsync(uri, cancellationtoken);
+             Socket.ConnectAsync(uri, cancellationtoken);
         }
 
-        public async Task SendMessageAsync(string message, CancellationToken cancellationtoken)
+        public void SendMessageAsync(string message, CancellationToken cancellationtoken)
         {
             if (Socket.State == WebSocketState.Open)
             {
-                var buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
-                await Socket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationtoken);
+                var buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message + "|"));
+              Socket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationtoken);
             }
         }
 
