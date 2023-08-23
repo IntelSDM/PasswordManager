@@ -5,12 +5,28 @@ namespace Client.Web
 {
     public class Sockets
     {
-        private ClientWebSocket Socket;
-
-        public Sockets()
+        public static Sockets Instance
         {
-            Socket = new ClientWebSocket();
+            get
+            {
+                if (LocalInstance == null)
+                    LocalInstance = new Sockets();
+
+                return LocalInstance;
+            }
         }
+        public static ClientWebSocket Socket
+        {
+            get
+            {
+                if (LocalSocket == null)
+                    LocalSocket = new ClientWebSocket();
+
+                return LocalSocket;
+            }
+        }
+        private static ClientWebSocket LocalSocket;
+        private static Sockets LocalInstance;
 
         public async Task ConnectAsync(Uri uri, CancellationToken cancellationtoken)
         {

@@ -15,20 +15,16 @@
 @code {
     private string status = "Disconnected";
     private string receivedMessage = "";
-
-    [Inject]
-    private Sockets WebSocketService { get; set; }
-
     private async Task Connect()
     {
         var uri = new Uri("wss://localhost:51000");
-        await WebSocketService.ConnectAsync(uri, CancellationToken.None);
+        await Sockets.Instance.ConnectAsync(uri, CancellationToken.None);
         status = "Connected";
     }
 
     private async Task Send()
     {
-        await WebSocketService.SendMessageAsync("Hello from Blazor WebSocket client!", CancellationToken.None);
+        await Sockets.Instance.SendMessageAsync("Hello from Blazor WebSocket client!", CancellationToken.None);
     }
 
 
@@ -36,6 +32,5 @@
     {
         await base.OnInitializedAsync();
 
-        // You can add further initialization logic here
     }
 }
