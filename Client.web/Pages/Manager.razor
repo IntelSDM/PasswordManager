@@ -1,0 +1,54 @@
+﻿@page "/Manager"
+@inject NavigationManager NavigationManager
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Password Manager</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var entry in ManagerObjects)
+        {
+                <tr>
+                    <td>@entry.Name</td>
+                    <td>@entry.Username</td>
+                    <td>
+                        <!-- Display a masked password or provide a "Show" button to reveal -->
+                    @if (entry.PasswordVisible)
+                    {
+                        @entry.Password
+                    }
+                    else
+                    {
+                                        <button class="btn btn-link" @onclick="() => entry.PasswordVisible = true">Show</button>
+                    }
+                    </td>
+                  
+                </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+  
+    List<ManagerJson> ManagerObjects = new List<ManagerJson> { };
+    class ManagerJson
+    {
+        public ManagerJson(string username,string password, string name)
+        {
+            Username = username;
+            Password = password;
+            Name = name;
+
+        }
+        public string Name;
+        public string Username;
+        public string Password;
+        public string Type = "Manager";
+        public bool PasswordVisible = false;
+    }
+  
+
+
+}
