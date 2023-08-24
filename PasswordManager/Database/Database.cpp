@@ -260,7 +260,7 @@ AddManagerResult Database::AddManager(const std::wstring& username, const std::w
 	delete statement;
 	return AddManagerResult::Success;
 }
-GetManagerResult Database::GetManagers()
+GetManagerResult Database::GetManagers(std::vector<Manager>* Managers)
 {
 	if (!LoggedIn)
 		return GetManagerResult::InvalidUser;
@@ -278,7 +278,7 @@ GetManagerResult Database::GetManagers()
 
 	if (userid == -1)
 		return GetManagerResult::NoInstances;
-
+	std::vector<Manager> managers;
 	statement = Connection->prepareStatement("SELECT Username, Password, Name FROM PasswordManagement WHERE UserID = ?");
 	statement->setInt(1, userid);
 	result = statement->executeQuery();
@@ -288,7 +288,9 @@ GetManagerResult Database::GetManagers()
 		sql::SQLString password = result->getString(2);
 		sql::SQLString name = result->getString(3);
 		std::cout << "Username: " << username.c_str() << " Password: " << password.c_str() << " Name: " << name.c_str() << std::endl;
+		managers.push_back(Manager(username, password, name));
 	}
+	*Managers = managers;
 	delete result;
 	delete statement;
 	return GetManagerResult::Success;

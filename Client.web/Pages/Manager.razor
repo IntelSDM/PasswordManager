@@ -21,7 +21,7 @@
                     }
                     else
                     {
-                                        <button class="btn btn-link" @onclick="() => entry.PasswordVisible = true">Show</button>
+                        <button class="btn btn-link" @onclick="() => entry.PasswordVisible = true">Show</button>
                     }
                     </td>
                   
@@ -31,7 +31,7 @@
 </table>
 
 @code {
-  
+
     List<ManagerJson> ManagerObjects = new List<ManagerJson> { };
     class ManagerJson
     {
@@ -48,7 +48,30 @@
         public string Type = "Manager";
         public bool PasswordVisible = false;
     }
-  
+    protected override void OnInitialized()
+    {
+
+        InitializeOnLoad();
+
+        base.OnInitialized();
+    }
+
+    private void InitializeOnLoad()
+    {
+        Sockets.Instance.ReceiveMessageAsync(CancellationToken.None).ContinueWith(task =>
+        {
+            string message = task.Result;
+            if (message.Contains("Manager"))
+            {
+                if (message == null)
+                    return;
+                List<ManagerJson> managers = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ManagerJson>>(message);
+                if(managers != null)
+                ManagerObjects = (managers);
+				StateHasChanged();
+			}
+		});
+    }
 
 
 }

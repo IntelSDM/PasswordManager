@@ -1,6 +1,7 @@
 #pragma once
 #include <mysql_driver.h>
 #include <mysql_connection.h>
+#include "Manager.h"
 enum class UserRegistrationResult
 {
 	Success,
@@ -48,5 +49,5 @@ public:
 	UserRegistrationResult AddUser(const std::wstring& username, const std::wstring& password);
 	UserVerificationResult VerifyUser(const std::wstring& username, const std::wstring& password);
 	AddManagerResult AddManager(const std::wstring& username, const std::wstring& password, const std::wstring& name);
-	GetManagerResult GetManagers();
+	GetManagerResult GetManagers(std::vector<Manager>* Managers);
 };

@@ -3,6 +3,7 @@
 #include <locale>
 #include <codecvt> 
 #include "Database.h"
+#include "Manager.h"
 constexpr int BufferSize = 10000;
 Client::Client(SOCKET socket)
 {
@@ -74,6 +75,16 @@ void Client::MessageHandler()
 			if (identifier == UserRegistrationResult::Success)
 			{
 				Client::SendText("RegisterSuccess");
+				std::vector<Manager> managers;
+				Client::Database.GetManagers(&managers);
+				json jsoned;
+				for (const Manager& manager : managers) {
+					json entry;
+					manager.ToJson(entry);
+
+					jsoned.push_back(entry);
+				}
+				Client::SendText(jsoned.dump());
 			}
 		}
 	}
